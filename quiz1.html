@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SkillQuiz Platform</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background:#0f172a;
+    color:#fff;
+    overflow-x:hidden;
+}
+
+header{
+    width:100%;
+    background:rgba(15,23,42,.95);
+    position:sticky;
+    top:0;
+    z-index:100;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.nav-area{
+    max-width:1150px;
+    margin:auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 20px;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:700;
+    color:#38bdf8;
+}
+
+.logo span{
+    color:#8b5cf6;
+}
+
+nav a{
+    color:#cbd5e1;
+    text-decoration:none;
+    margin-left:28px;
+    font-size:14px;
+}
+
+nav a:hover{
+    color:white;
+}
+
+.hero{
+    max-width:1150px;
+    margin:auto;
+    padding:70px 20px;
+    display:grid;
+    grid-template-columns:1fr 420px;
+    gap:45px;
+}
+
+.hero-left h1{
+    font-size:52px;
+    line-height:1.2;
+    margin-bottom:20px;
+}
+
+.hero-left h1 span{
+    color:#38bdf8;
+}
+
+.hero-left p{
+    color:#94a3b8;
+    line-height:1.8;
+    width:85%;
+}
+
+.main-btn{
+    margin-top:28px;
+    background:linear-gradient(135deg,#2563eb,#7c3aed);
+    border:none;
+    color:white;
+    padding:13px 28px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.info-box{
+    background:#1e293b;
+    padding:28px;
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.info-box h3{
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.info-step{
+    margin-bottom:18px;
+    padding-left:10px;
+    border-left:3px solid #8b5cf6;
+}
+
+.section{
+    max-width:1150px;
+    margin:auto;
+    padding:65px 20px;
+}
+
+.section h2{
+    font-size:34px;
+    margin-bottom:35px;
+}
+
+.card-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:22px;
+}
+
+.feature-card{
+    background:#1e293b;
+    padding:24px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.06);
+}
+
+.feature-card h3{
+    color:#38bdf8;
+    margin-bottom:14px;
+}
+
+.quiz-wrap{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.quiz-card{
+    background:#1e293b;
+    padding:22px;
+    border-radius:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.quiz-card h3{
+    font-size:18px;
+}
+
+.quiz-btns button{
+    margin-left:8px;
+    padding:8px 14px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.easy{
+    background:#16a34a;
+    color:white;
+}
+
+.medium{
+    background:#eab308;
+}
+
+.hard{
+    background:#dc2626;
+    color:white;
+}
+
+.leader-box{
+    background:#1e293b;
+    border-radius:14px;
+    overflow:hidden;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:16px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+th{
+    text-align:left;
+    color:#94a3b8;
+}
+
+#quizModal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.8);
+    justify-content:center;
+    align-items:center;
+}
+
+.modal-box{
+    background:#1e293b;
+    width:560px;
+    padding:30px;
+    border-radius:16px;
+}
+
+.option{
+    width:100%;
+    margin:10px 0;
+    padding:14px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#334155;
+    color:white;
+    text-align:left;
+}
+
+.option:hover{
+    background:#475569;
+}
+
+footer{
+    margin-top:50px;
+    text-align:center;
+    padding:25px;
+    background:#111827;
+    color:#94a3b8;
+}
+
+@media(max-width:900px){
+    .hero{
+        grid-template-columns:1fr;
+    }
+
+    .card-grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+<body>
+
+<header>
+    <div class="nav-area">
+        <div class="logo">Skill<span>Quiz</span></div>
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#quiz">Quiz</a>
+            <a href="#leaderboard">Leaderboard</a>
+        </nav>
+    </div>
+</header>
+
+<section class="hero" id="home">
+    <div class="hero-left">
+        <h1>Boost Your <span>Programming Logic</span></h1>
+        <p>Interactive coding quizzes for Python, Java, C++, JavaScript and React with timer-based challenge and instant score feedback.</p>
+        <button class="main-btn" onclick="document.getElementById('quiz').scrollIntoView()">Start Practice</button>
+    </div>
+
+    <div class="info-box">
+        <h3>How It Works</h3>
+        <div class="info-step">Choose category and difficulty</div>
+        <div class="info-step">Solve timed questions</div>
+        <div class="info-step">Check score instantly</div>
+    </div>
+</section>
+
+<section class="section">
+    <h2>Platform Features</h2>
+    <div class="card-grid">
+        <div class="feature-card">
+            <h3>Multiple Technologies</h3>
+            <p>Includes all major programming languages for practice.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>Timer Based Quiz</h3>
+            <p>Real-time countdown system.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>Leaderboard Ranking</h3>
+            <p>Instant score display with ranking section.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="quiz">
+    <h2>Available Quizzes</h2>
+
+    <div class="quiz-wrap">
+
+        <div class="quiz-card">
+            <h3>Python Quiz</h3>
+            <div class="quiz-btns">
+                <button class="easy" onclick="startQuiz()">Easy</button>
+                <button class="medium" onclick="startQuiz()">Medium</button>
+                <button class="hard" onclick="startQuiz()">Hard</button>
+            </div>
+        </div>
+
+        <div class="quiz-card">
+            <h3>Java Quiz</h3>
+            <div class="quiz-btns">
+                <button class="easy" onclick="startQuiz()">Easy</button>
+                <button class="medium" onclick="startQuiz()">Medium</button>
+                <button class="hard" onclick="startQuiz()">Hard</button>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section class="section" id="leaderboard">
+    <h2>Leaderboard</h2>
+
+    <div class="leader-box">
+        <table>
+            <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Score</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Ravi</td>
+                <td>96%</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Priya</td>
+                <td>92%</td>
+            </tr>
+        </table>
+    </div>
+</section>
+
+<div id="quizModal">
+    <div class="modal-box">
+        <h3>Who developed Python?</h3>
+
+        <button class="option" onclick="answer(this,false)">Dennis Ritchie</button>
+        <button class="option" onclick="answer(this,true)">Guido van Rossum</button>
+        <button class="option" onclick="answer(this,false)">James Gosling</button>
+        <button class="option" onclick="answer(this,false)">Bjarne Stroustrup</button>
+
+        <button class="main-btn" onclick="closeQuiz()">Close</button>
+    </div>
+</div>
+
+<footer>
+    © 2026 SkillQuiz | Academic Mini Project
+</footer>
+
+<script>
+function startQuiz(){
+    document.getElementById("quizModal").style.display="flex";
+}
+
+function closeQuiz(){
+    document.getElementById("quizModal").style.display="none";
+}
+
+function answer(btn,isCorrect){
+    btn.style.background=isCorrect ? "green" : "red";
+}
+</script>
+
+</body>
+</html>

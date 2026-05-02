@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>QuizCoding – Challenge Yourself</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #16161a;
+    --card: #1e1e24;
+    --border: #2a2a35;
+    --accent: #7c3aed;
+    --accent2: #06b6d4;
+    --green: #10b981;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'Space Mono', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 14px; min-height: 100vh; }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+  /* ─── NAV ─── */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(13,13,15,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 60px; }
+  .nav-brand { font-family: var(--font-head); font-size: 22px; color: var(--accent); letter-spacing: -1px; cursor: pointer; }
+  .nav-brand span { color: var(--accent2); }
+  .nav-links { display: flex; gap: 28px; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 13px; transition: color .2s; }
+  .nav-links a:hover { color: var(--text); }
+  .btn-nav { background: var(--accent); color: #fff; border: none; padding: 8px 20px; border-radius: 6px; font-family: var(--font-body); font-size: 13px; cursor: pointer; transition: opacity .2s; }
+  .btn-nav:hover { opacity: .85; }
+
+  /* ─── HERO ─── */
+  #home { padding: 90px 32px 60px; max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  .hero-badge { display: inline-block; background: rgba(124,58,237,.15); border: 1px solid rgba(124,58,237,.4); color: var(--accent); padding: 4px 12px; border-radius: 20px; font-size: 12px; margin-bottom: 20px; }
+  .hero-title { font-family: var(--font-head); font-size: clamp(32px,4vw,52px); line-height: 1.1; margin-bottom: 18px; }
+  .hero-title .hl { color: var(--accent2); }
+  .hero-sub { color: var(--muted); line-height: 1.7; margin-bottom: 28px; font-size: 13px; }
+  .btn-hero { background: linear-gradient(135deg, var(--accent), #5b21b6); color: #fff; border: none; padding: 12px 30px; border-radius: 8px; font-family: var(--font-body); font-size: 14px; cursor: pointer; transition: transform .2s, box-shadow .2s; }
+  .btn-hero:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124,58,237,.4); }
+  .hero-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 28px; }
+  .hero-card h3 { font-family: var(--font-head); font-size: 16px; color: var(--accent2); margin-bottom: 18px; }
+  .step { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 16px; }
+  .step-num { background: var(--accent); color: #fff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .step p { color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+  /* ─── SECTION ─── */
+  section { max-width: 1100px; margin: 0 auto; padding: 60px 32px; }
+  .section-tag { color: var(--accent); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+  .section-title { font-family: var(--font-head); font-size: clamp(24px,3vw,36px); margin-bottom: 40px; }
+
+  /* ─── HOW TO PLAY ─── */
+  #how-to-play { background: var(--surface); max-width: 100%; padding: 60px 0; }
+  #how-to-play .inner { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+  .htplay-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+  .htplay-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 28px; transition: border-color .2s; }
+  .htplay-card:hover { border-color: var(--accent); }
+  .htplay-icon { font-size: 32px; margin-bottom: 14px; }
+  .htplay-card h3 { font-family: var(--font-head); font-size: 16px; margin-bottom: 14px; color: var(--accent2); }
+  .htplay-card p { color: var(--muted); font-size: 12px; line-height: 1.8; margin-bottom: 8px; }
+  .htplay-card strong { color: var(--text); }
+
+  /* ─── QUIZZES ─── */
+  .quiz-categories { display: flex; flex-direction: column; gap: 20px; }
+  .quiz-cat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px 28px; display: flex; align-items: center; gap: 24px; }
+  .cat-icon { font-size: 28px; width: 52px; height: 52px; background: rgba(124,58,237,.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .cat-info { flex: 1; }
+  .cat-info h3 { font-family: var(--font-head); font-size: 17px; margin-bottom: 10px; }
+  .level-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-level { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 6px 16px; border-radius: 6px; font-family: var(--font-body); font-size: 12px; cursor: pointer; transition: all .2s; }
+  .btn-level.easy:hover  { border-color: var(--green); color: var(--green); }
+  .btn-level.medium:hover{ border-color: var(--yellow); color: var(--yellow); }
+  .btn-level.hard:hover  { border-color: var(--red); color: var(--red); }
+
+  /* ─── LEADERBOARD ─── */
+  #leaderboard { background: var(--surface); max-width: 100%; padding: 60px 0; }
+  #leaderboard .inner { max-width: 700px; margin: 0 auto; padding: 0 32px; }
+  .lb-table { width: 100%; border-collapse: collapse; }
+  .lb-table th { text-align: left; padding: 10px 16px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); }
+  .lb-table td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .lb-table tr:last-child td { border-bottom: none; }
+  .rank-1 { color: #ffd700; font-weight: 700; }
+  .rank-2 { color: #c0c0c0; }
+  .rank-3 { color: #cd7f32; }
+  .score-bar-wrap { background: var(--border); border-radius: 4px; height: 6px; width: 120px; overflow: hidden; display: inline-block; vertical-align: middle; margin-left: 10px; }
+  .score-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 4px; }
+
+  /* ─── QUIZ MODAL ─── */
+  #quizModal { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.85); backdrop-filter: blur(6px); align-items: center; justify-content: center; }
+  #quizModal.open { display: flex; }
+  .quiz-box { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 40px; width: min(680px, 95vw); max-height: 90vh; overflow-y: auto; position: relative; animation: slideUp .3s ease; }
+  @keyframes slideUp { from { transform: translateY(30px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+  .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+  .quiz-cat-label { font-family: var(--font-head); font-size: 20px; }
+  .timer { font-size: 22px; font-weight: 700; color: var(--red); font-family: var(--font-head); min-width: 90px; text-align: right; }
+  .timer.warning { animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .progress-wrap { background: var(--border); border-radius: 4px; height: 4px; margin-bottom: 28px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 4px; transition: width .4s; }
+  .q-num { color: var(--muted); font-size: 12px; margin-bottom: 12px; }
+  .q-text { font-family: var(--font-head); font-size: 18px; line-height: 1.5; margin-bottom: 28px; }
+  .options { display: flex; flex-direction: column; gap: 12px; }
+  .opt-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 14px 20px; border-radius: 10px; font-family: var(--font-body); font-size: 13px; cursor: pointer; text-align: left; transition: all .2s; }
+  .opt-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(124,58,237,.1); }
+  .opt-btn.correct { border-color: var(--green); background: rgba(16,185,129,.15); color: var(--green); }
+  .opt-btn.wrong   { border-color: var(--red);   background: rgba(239,68,68,.15);   color: var(--red);   }
+  .opt-btn:disabled { cursor: default; }
+  .next-btn { margin-top: 24px; background: var(--accent); color: #fff; border: none; padding: 12px 28px; border-radius: 8px; font-family: var(--font-body); font-size: 13px; cursor: pointer; transition: opacity .2s; }
+  .next-btn:hover { opacity: .85; }
+  .close-btn { position: absolute; top: 16px; right: 16px; background: var(--border); border: none; color: var(--muted); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+
+  /* ─── RESULT ─── */
+  .result-screen { text-align: center; }
+  .stars { font-size: 48px; margin: 20px 0; letter-spacing: 4px; }
+  .result-score { font-family: var(--font-head); font-size: 42px; color: var(--accent2); margin-bottom: 10px; }
+  .result-msg { color: var(--muted); font-size: 13px; margin-bottom: 30px; }
+  .result-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 10px 24px; border-radius: 8px; font-family: var(--font-body); font-size: 13px; cursor: pointer; transition: all .2s; }
+  .btn-outline:hover { border-color: var(--accent); color: var(--text); }
+
+  /* ─── FOOTER ─── */
+  footer { background: var(--surface); border-top: 1px solid var(--border); padding: 40px 32px; text-align: center; color: var(--muted); font-size: 12px; }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  @media(max-width:768px){
+    #home { grid-template-columns: 1fr; padding: 40px 20px; }
+    .htplay-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 16px; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand" onclick="scrollTo(0,0)">Quiz<span>Coding</span></div>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#how-to-play-sec">How to Play</a></li>
+    <li><a href="#quizzes-sec">Quizzes</a></li>
+    <li><a href="#lb-sec">Leaderboard</a></li>
+  </ul>
+  <button class="btn-nav" onclick="document.getElementById('quizzes-sec').scrollIntoView({behavior:'smooth'})">Start Quiz</button>
+</nav>
+
+<!-- HERO -->
+<div id="home">
+  <div>
+    <span class="hero-badge">🚀 Web Technology Project 2025–26</span>
+    <h1 class="hero-title">Level Up Your<br/><span class="hl">Programming</span><br/>Skills</h1>
+    <p class="hero-sub">Challenge yourself with timed quizzes across Python, Java, C, C++, React & JavaScript. Track your rank on the live leaderboard.</p>
+    <button class="btn-hero" onclick="document.getElementById('quizzes-sec').scrollIntoView({behavior:'smooth'})">Explore Quizzes →</button>
+  </div>
+  <div class="hero-card">
+    <h3>Get started in 3 steps</h3>
+    <div class="step"><div class="step-num">1</div><p>Select a quiz category and difficulty level (Easy / Medium / Hard)</p></div>
+    <div class="step"><div class="step-num">2</div><p>Answer 10 questions within the 20-minute countdown timer</p></div>
+    <div class="step"><div class="step-num">3</div><p>View your score, earn stars, and compare on the leaderboard</p></div>
+  </div>
+</div>
+
+<!-- HOW TO PLAY -->
+<section id="how-to-play-sec" style="background:var(--surface);max-width:100%;padding:60px 0;">
+  <div class="inner" style="max-width:1100px;margin:0 auto;padding:0 32px;">
+    <div class="section-tag">Guidelines</div>
+    <div class="section-title">🎮 How to Play</div>
+    <div class="htplay-grid">
+      <div class="htplay-card">
+        <div class="htplay-icon">🚀</div>
+        <h3>Pick a Challenge</h3>
+        <p><strong>Select Your Tech Stack:</strong> Choose from Java, Python, C++, React, C, or JavaScript.</p>
+        <p><strong>Dynamic Difficulty:</strong> Easy, Medium, or Hard to test specific logic and syntax.</p>
+        <p><strong>Live Questions:</strong> Questions fetched dynamically from the database via REST APIs.</p>
+      </div>
+      <div class="htplay-card">
+        <div class="htplay-icon">⏱️</div>
+        <h3>Race the Clock</h3>
+        <p><strong>Beat the Timer:</strong> You have a strict 20-minute window to complete all 10 questions.</p>
+        <p><strong>Precision Tracking:</strong> Real-time countdown helps manage your speed and accuracy.</p>
+        <p><strong>Auto-Submit:</strong> Spring Boot backend calculates progress even if the timer hits zero.</p>
+      </div>
+      <div class="htplay-card">
+        <div class="htplay-icon">🏆</div>
+        <h3>Claim Your Spot</h3>
+        <p><strong>Earn Stars:</strong> Receive a 1–5 star rating calculated by our custom scoring algorithm.</p>
+        <p><strong>Global Ranking:</strong> Compare against other SPPU students on the real-time leaderboard.</p>
+        <p><strong>Academic Excellence:</strong> Use instant feedback to identify gaps for final-year placements.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZZES -->
+<section id="quizzes-sec">
+  <div class="section-tag">Available</div>
+  <div class="section-title">Available Quizzes</div>
+  <div class="quiz-categories">
+
+    <div class="quiz-cat-card">
+      <div class="cat-icon">🐍</div>
+      <div class="cat-info">
+        <h3>Python Quiz</h3>
+        <div class="level-btns">
+          <button class="btn-level easy"   onclick="startQuiz('Python','Easy')">Easy Python</button>
+          <button class="btn-level medium" onclick="startQuiz('Python','Medium')">Medium Python</button>
+          <button class="btn-level hard"   onclick="startQuiz('Python','Hard')">Hard Python</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-cat-card">
+      <div class="cat-icon">🖥️</div>
+      <div class="cat-info">
+        <h3>C Programming Quiz</h3>
+        <div class="level-btns">
+          <button class="btn-level easy"   onclick="startQuiz('C','Easy')">Easy C</button>
+          <button class="btn-level medium" onclick="startQuiz('C','Medium')">Medium C</button>
+          <button class="btn-level hard"   onclick="startQuiz('C','Hard')">Hard C</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-cat-card">
+      <div class="cat-icon">☕</div>
+      <div class="cat-info">
+        <h3>Java Quiz</h3>
+        <div class="level-btns">
+          <button class="btn-level easy"   onclick="startQuiz('Java','Easy')">Easy Java</button>
+          <button class="btn-level medium" onclick="startQuiz('Java','Medium')">Medium Java</button>
+          <button class="btn-level hard"   onclick="startQuiz('Java','Hard')">Hard Java</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-cat-card">
+      <div class="cat-icon">⚙️</div>
+      <div class="cat-info">
+        <h3>C++ Quiz</h3>
+        <div class="level-btns">
+          <button class="btn-level easy"   onclick="startQuiz('Cpp','Easy')">Easy C++</button>
+          <button class="btn-level medium" onclick="startQuiz('Cpp','Medium')">Medium C++</button>
+          <button class="btn-level hard"   onclick="startQuiz('Cpp','Hard')">Hard C++</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-cat-card">
+      <div class="cat-icon">⚛️</div>
+      <div class="cat-info">
+        <h3>React Quiz</h3>
+        <div class="level-btns">
+          <button class="btn-level easy"   onclick="startQuiz('React','Easy')">Easy React</button>
+          <button class="btn-level medium" onclick="startQuiz('React','Medium')">Medium React</button>
+          <button class="btn-level hard"   onclick="startQuiz('React','Hard')">Hard React</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-cat-card">
+      <div class="cat-icon">🟨</div>
+      <div class="cat-info">
+        <h3>JavaScript Quiz</h3>
+        <div class="level-btns">
+          <button class="btn-level easy"   onclick="startQuiz('JavaScript','Easy')">Easy JS</button>
+          <button class="btn-level medium" onclick="startQuiz('JavaScript','Medium')">Medium JS</button>
+          <button class="btn-level hard"   onclick="startQuiz('JavaScript','Hard')">Hard JS</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- LEADERBOARD -->
+<section id="lb-sec" style="background:var(--surface);max-width:100%;padding:60px 0;">
+  <div class="inner" style="max-width:700px;margin:0 auto;padding:0 32px;">
+    <div class="section-tag">Rankings</div>
+    <div class="section-title">🏆 Leaderboard</div>
+    <table class="lb-table">
+      <thead><tr><th>#</th><th>Name</th><th>Category</th><th>Score</th></tr></thead>
+      <tbody id="lbBody">
+        <tr><td class="rank-1">1</td><td>Alice</td><td>Python – Hard</td><td>98% <span class="score-bar-wrap"><span class="score-bar" style="width:98%"></span></span></td></tr>
+        <tr><td class="rank-2">2</td><td>Ravi</td><td>Java – Medium</td><td>95% <span class="score-bar-wrap"><span class="score-bar" style="width:95%"></span></span></td></tr>
+        <tr><td class="rank-3">3</td><td>Sam</td><td>C++ – Hard</td><td>93% <span class="score-bar-wrap"><span class="score-bar" style="width:93%"></span></span></td></tr>
+        <tr><td>4</td><td>Priya</td><td>React – Easy</td><td>88% <span class="score-bar-wrap"><span class="score-bar" style="width:88%"></span></span></td></tr>
+        <tr><td>5</td><td>Arjun</td><td>JavaScript – Medium</td><td>82% <span class="score-bar-wrap"><span class="score-bar" style="width:82%"></span></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- QUIZ MODAL -->
+<div id="quizModal">
+  <div class="quiz-box">
+    <button class="close-btn" onclick="closeQuiz()">✕</button>
+    <div id="quizInner"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p style="font-family:'Syne',sans-serif;font-size:18px;margin-bottom:10px;">Quiz<span style="color:var(--accent2)">Coding</span></p>
+  <p>📧 support@quizcoding.com &nbsp;|&nbsp; 📞 +91 98765 43210</p>
+  <p style="margin-top:12px;">© 2026 QuizCoding Platform | Department of Computer Engineering, NESGI Pune</p>
+  <p style="margin-top:6px;">Submitted to <a href="#">Savitribai Phule Pune University</a> | Under guidance of Prof. P.N. Thorat</p>
+</footer>
+
+<script>
+// ─── QUESTION BANK ───
+const QB = {
+  Python: {
+    Easy: [
+      {q:"Who developed Python?", opts:["Dennis Ritchie","Guido van Rossum","Bjarne Stroustrup","James Gosling"], ans:"Guido van Rossum"},
+      {q:"Which keyword is used to define a function in Python?", opts:["func","def","function","define"], ans:"def"},
+      {q:"What is the output of print(2**3)?", opts:["6","8","9","None"], ans:"8"},
+      {q:"Which data type is immutable in Python?", opts:["List","Dict","Tuple","Set"], ans:"Tuple"},
+      {q:"How do you start a comment in Python?", opts:["//","/*","#","--"], ans:"#"},
+      {q:"What does len() do?", opts:["Returns largest","Returns length","Returns type","Converts to list"], ans:"Returns length"},
+      {q:"Which is NOT a Python data type?", opts:["int","float","char","bool"], ans:"char"},
+      {q:"What is the output of bool(0)?", opts:["True","False","0","Error"], ans:"False"},
+      {q:"Which module handles math in Python?", opts:["calc","maths","math","numeric"], ans:"math"},
+      {q:"How do you create a list in Python?", opts:["{}","()","[]","<>"], ans:"[]"},
+    ],
+    Medium: [
+      {q:"What is a lambda function?", opts:["A named function","An anonymous function","A class method","A built-in function"], ans:"An anonymous function"},
+      {q:"What does *args allow?", opts:["Keyword args","Variable positional args","Only 2 args","Dict args"], ans:"Variable positional args"},
+      {q:"Which method removes duplicates from a list?", opts:["unique()","set()","distinct()","filter()"], ans:"set()"},
+      {q:"What is list comprehension?", opts:["A comment style","Concise way to create lists","A sorting method","A class"], ans:"Concise way to create lists"},
+      {q:"What does __init__ do?", opts:["Deletes an object","Initializes an object","Imports a module","Calls a function"], ans:"Initializes an object"},
+      {q:"Which is used for file handling?", opts:["open()","read()","file()","load()"], ans:"open()"},
+      {q:"What is a decorator in Python?", opts:["A comment","A function wrapper","A class keyword","A list method"], ans:"A function wrapper"},
+      {q:"What does zip() do?", opts:["Compresses files","Combines iterables","Sorts a list","None of these"], ans:"Combines iterables"},
+      {q:"What is the output of 'abc'[::-1]?", opts:["abc","cba","error","None"], ans:"cba"},
+      {q:"Which library is used for data analysis?", opts:["NumPy","Pandas","Both","Flask"], ans:"Pandas"},
+    ],
+    Hard: [
+      {q:"What is a generator in Python?", opts:["A list factory","A function using yield","A class","A module"], ans:"A function using yield"},
+      {q:"What is GIL in Python?", opts:["Global Index List","Global Interpreter Lock","General Input Layer","None"], ans:"Global Interpreter Lock"},
+      {q:"What does @staticmethod do?", opts:["Binds to class","No class/instance binding","Makes private","Inherits"], ans:"No class/instance binding"},
+      {q:"What is memoization?", opts:["Memory allocation","Caching function results","Garbage collection","Recursion"], ans:"Caching function results"},
+      {q:"What is __slots__ used for?", opts:["Restricting attributes","Multi-threading","Logging","None"], ans:"Restricting attributes"},
+      {q:"What is the purpose of __enter__ and __exit__?", opts:["Iteration","Context managers","Exception handling","Decorators"], ans:"Context managers"},
+      {q:"What does super() do?", opts:["Creates new class","Calls parent method","Deletes object","Imports module"], ans:"Calls parent method"},
+      {q:"What is metaclass in Python?", opts:["A parent class","Class of a class","A module","Abstract class"], ans:"Class of a class"},
+      {q:"What is pickle module used for?", opts:["Data compression","Serializing objects","Network calls","Math ops"], ans:"Serializing objects"},
+      {q:"What is asyncio used for?", opts:["Threading","Async I/O programming","Database","UI"], ans:"Async I/O programming"},
+    ]
+  },
+  C: {
+    Easy: [
+      {q:"Who created the C language?", opts:["Dennis Ritchie","Bjarne Stroustrup","Linus Torvalds","Guido van Rossum"], ans:"Dennis Ritchie"},
+      {q:"What is the correct extension for C files?", opts:[".c",".cpp",".java",".py"], ans:".c"},
+      {q:"Which header file is used for printf?", opts:["stdlib.h","string.h","stdio.h","math.h"], ans:"stdio.h"},
+      {q:"What is the size of int in C (32-bit)?", opts:["1 byte","2 bytes","4 bytes","8 bytes"], ans:"4 bytes"},
+      {q:"How do you write a single-line comment in C?", opts:["#","//","/*","--"], ans:"//"},
+      {q:"What does scanf() do?", opts:["Prints output","Reads input","Scans files","None"], ans:"Reads input"},
+      {q:"Which loop is guaranteed to execute at least once?", opts:["for","while","do-while","none"], ans:"do-while"},
+      {q:"What is a pointer?", opts:["A variable","Stores memory address","A function","A keyword"], ans:"Stores memory address"},
+      {q:"What is NULL in C?", opts:["0","Empty string","Nothing","Undefined"], ans:"0"},
+      {q:"Which operator is used to access structure member?", opts:["->",".","::","%"], ans:"."},
+    ],
+    Medium: [
+      {q:"What is a dangling pointer?", opts:["NULL pointer","Pointer to freed memory","Wild pointer","Void pointer"], ans:"Pointer to freed memory"},
+      {q:"What is malloc() used for?", opts:["Memory deallocation","Dynamic memory allocation","Static allocation","None"], ans:"Dynamic memory allocation"},
+      {q:"What is the output of sizeof(char)?", opts:["1","2","4","8"], ans:"1"},
+      {q:"What does extern keyword do?", opts:["Declares global var","Defines static","Local scope","None"], ans:"Declares global var"},
+      {q:"What is recursion?", opts:["Loop","Function calling itself","Class method","Pointer op"], ans:"Function calling itself"},
+      {q:"What is a struct?", opts:["A function","User-defined data type","A pointer","A loop"], ans:"User-defined data type"},
+      {q:"What does free() do?", opts:["Allocates memory","Deallocates memory","Copies memory","None"], ans:"Deallocates memory"},
+      {q:"What is a typedef?", opts:["Creates alias for type","A new type","A pointer","A macro"], ans:"Creates alias for type"},
+      {q:"What is bit masking?", opts:["Hiding bits","Using bitwise ops on specific bits","Encryption","None"], ans:"Using bitwise ops on specific bits"},
+      {q:"What is the use of volatile keyword?", opts:["Prevents optimization","Static storage","Inline expansion","None"], ans:"Prevents optimization"},
+    ],
+    Hard: [
+      {q:"What is undefined behavior in C?", opts:["Compile error","Runtime error","Unpredictable result","Segfault"], ans:"Unpredictable result"},
+      {q:"What is function pointer?", opts:["Pointer to var","Pointer to function","Void pointer","NULL pointer"], ans:"Pointer to function"},
+      {q:"What is the purpose of static keyword in a function?", opts:["Global scope","Retains value across calls","Thread safe","None"], ans:"Retains value across calls"},
+      {q:"What is memory alignment?", opts:["Memory sorting","Data stored at aligned addresses","Compression","None"], ans:"Data stored at aligned addresses"},
+      {q:"What is an inline function?", opts:["Recursive","Code expanded at call site","Static","Virtual"], ans:"Code expanded at call site"},
+      {q:"What is longjmp used for?", opts:["Memory alloc","Non-local goto","Threading","Sorting"], ans:"Non-local goto"},
+      {q:"What is the difference between stack and heap?", opts:["Same","Stack auto-managed, heap manual","Heap is faster","None"], ans:"Stack auto-managed, heap manual"},
+      {q:"What is a union in C?", opts:["Like struct but shared memory","Multiple structs","A pointer","A type"], ans:"Like struct but shared memory"},
+      {q:"What does #pragma do?", opts:["Comment","Compiler-specific directive","Import","Define"], ans:"Compiler-specific directive"},
+      {q:"What is endianness?", opts:["Memory size","Byte order in memory","Data type","None"], ans:"Byte order in memory"},
+    ]
+  },
+  Java: {
+    Easy: [
+      {q:"Who developed Java?", opts:["Bill Gates","James Gosling","Dennis Ritchie","Guido van Rossum"], ans:"James Gosling"},
+      {q:"What does JVM stand for?", opts:["Java Variable Machine","Java Virtual Machine","Java Verified Module","None"], ans:"Java Virtual Machine"},
+      {q:"Which is the correct syntax to print in Java?", opts:["print()","console.log()","System.out.println()","echo"], ans:"System.out.println()"},
+      {q:"What is the extension of Java source file?", opts:[".java",".class",".js",".jv"], ans:".java"},
+      {q:"Which keyword creates an object?", opts:["create","object","new","make"], ans:"new"},
+      {q:"What is the parent class of all Java classes?", opts:["Class","Base","Object","Super"], ans:"Object"},
+      {q:"Which access modifier is most restrictive?", opts:["public","protected","default","private"], ans:"private"},
+      {q:"What is an interface in Java?", opts:["A class","Abstract blueprint","A variable","A method"], ans:"Abstract blueprint"},
+      {q:"What does 'final' keyword mean?", opts:["Can inherit","Cannot be changed/overridden","Static","None"], ans:"Cannot be changed/overridden"},
+      {q:"Which collection allows duplicate elements?", opts:["Set","Map","List","Tree"], ans:"List"},
+    ],
+    Medium: [
+      {q:"What is method overloading?", opts:["Same name, different return","Same name, different params","Inheritance","Override"], ans:"Same name, different params"},
+      {q:"What is the purpose of 'super' keyword?", opts:["Call child class","Call parent class","Static method","Delete object"], ans:"Call parent class"},
+      {q:"What is autoboxing in Java?", opts:["Auto casting","Primitive to wrapper auto-conversion","Compressing data","None"], ans:"Primitive to wrapper auto-conversion"},
+      {q:"What is a checked exception?", opts:["Runtime exception","Must be handled at compile time","Unchecked","Error"], ans:"Must be handled at compile time"},
+      {q:"Which keyword is used to implement an interface?", opts:["extends","implements","inherits","uses"], ans:"implements"},
+      {q:"What is the difference between == and equals()?", opts:["No difference","== checks reference, equals checks value","== for strings only","None"], ans:"== checks reference, equals checks value"},
+      {q:"What is an abstract class?", opts:["Cannot be instantiated","Fully implemented","Static class","Final class"], ans:"Cannot be instantiated"},
+      {q:"What is a lambda expression in Java?", opts:["A class","Anonymous function","A loop","Import"], ans:"Anonymous function"},
+      {q:"What is Java Stream API used for?", opts:["I/O streams","Processing collections functionally","Networking","None"], ans:"Processing collections functionally"},
+      {q:"What is the use of 'synchronized' keyword?", opts:["Async code","Thread safety","Static method","None"], ans:"Thread safety"},
+    ],
+    Hard: [
+      {q:"What is the Java Memory Model?", opts:["Heap layout","Rules for thread visibility of shared vars","GC model","None"], ans:"Rules for thread visibility of shared vars"},
+      {q:"What is a WeakReference in Java?", opts:["Strong reference","Reference GC can collect","SoftReference","None"], ans:"Reference GC can collect"},
+      {q:"What is ConcurrentHashMap?", opts:["Synchronized HashMap","Thread-safe HashMap with segment locking","A list","None"], ans:"Thread-safe HashMap with segment locking"},
+      {q:"What is bytecode in Java?", opts:["Machine code","Intermediate code run by JVM","Source code","Binary"], ans:"Intermediate code run by JVM"},
+      {q:"What is the purpose of ClassLoader?", opts:["Compiles Java","Loads class files at runtime","Creates objects","None"], ans:"Loads class files at runtime"},
+      {q:"What is a ForkJoinPool?", opts:["A thread pool for divide-and-conquer tasks","A database pool","Network pool","None"], ans:"A thread pool for divide-and-conquer tasks"},
+      {q:"What is Reflection in Java?", opts:["Code mirroring","Runtime inspection of classes","Logging","None"], ans:"Runtime inspection of classes"},
+      {q:"What is the diamond problem?", opts:["A design pattern","Ambiguity in multiple inheritance","Exception type","None"], ans:"Ambiguity in multiple inheritance"},
+      {q:"What is a Phantom Reference?", opts:["Weak ref","Collected before finalization notification","Strong ref","None"], ans:"Collected before finalization notification"},
+      {q:"What does volatile guarantee in Java?", opts:["Atomicity","Visibility across threads","Ordering only","None"], ans:"Visibility across threads"},
+    ]
+  },
+  Cpp: {
+    Easy: [
+      {q:"Who created C++?", opts:["Dennis Ritchie","Bjarne Stroustrup","James Gosling","Guido van Rossum"], ans:"Bjarne Stroustrup"},
+      {q:"What does OOP stand for?", opts:["Object Oriented Programming","Open Object Protocol","None","Optional OP"], ans:"Object Oriented Programming"},
+      {q:"What is cin used for?", opts:["Output","Input","File I/O","Math"], ans:"Input"},
+      {q:"What is a class in C++?", opts:["A function","Blueprint for objects","A variable","A loop"], ans:"Blueprint for objects"},
+      {q:"What is the default access specifier in a class?", opts:["public","private","protected","none"], ans:"private"},
+      {q:"What is a constructor?", opts:["Destroys object","Special function to initialize object","Returns value","None"], ans:"Special function to initialize object"},
+      {q:"What is polymorphism?", opts:["Same code, different behavior","Hiding data","Inheritance","None"], ans:"Same code, different behavior"},
+      {q:"What does new keyword do?", opts:["Deletes memory","Allocates dynamic memory","Declares variable","None"], ans:"Allocates dynamic memory"},
+      {q:"What is a destructor?", opts:["Creates object","Called when object is destroyed","A constructor","None"], ans:"Called when object is destroyed"},
+      {q:"What is inheritance?", opts:["Copying code","Deriving class from another","Polymorphism","Encapsulation"], ans:"Deriving class from another"},
+    ],
+    Medium: [
+      {q:"What is virtual function?", opts:["Static function","Overridable function via pointer","Inline function","None"], ans:"Overridable function via pointer"},
+      {q:"What is a template in C++?", opts:["Design pattern","Generic programming construct","A class","None"], ans:"Generic programming construct"},
+      {q:"What is operator overloading?", opts:["Creating new operators","Redefining operator for user types","Deleting operators","None"], ans:"Redefining operator for user types"},
+      {q:"What is STL?", opts:["Standard Template Library","Static Type Library","None","System Tool List"], ans:"Standard Template Library"},
+      {q:"What is a copy constructor?", opts:["Copies a class","Creates object from existing object","Destructor","None"], ans:"Creates object from existing object"},
+      {q:"What is multiple inheritance?", opts:["Two objects","Class inherits from multiple classes","Override","None"], ans:"Class inherits from multiple classes"},
+      {q:"What is the 'this' pointer?", opts:["Current class pointer","Parent class","Child class","None"], ans:"Current class pointer"},
+      {q:"What is friend function?", opts:["Public function","Can access private members of a class","Static function","None"], ans:"Can access private members of a class"},
+      {q:"What is RAII?", opts:["Resource Acquisition Is Initialization","Random Access Input","None","Runtime Array"], ans:"Resource Acquisition Is Initialization"},
+      {q:"What is a pure virtual function?", opts:["Inline virtual","Must be overridden in derived class","Static virtual","None"], ans:"Must be overridden in derived class"},
+    ],
+    Hard: [
+      {q:"What is move semantics in C++11?", opts:["Copying objects","Transferring resources without copying","Memory allocation","None"], ans:"Transferring resources without copying"},
+      {q:"What is a smart pointer?", opts:["Raw pointer","Auto-managing pointer","A template","None"], ans:"Auto-managing pointer"},
+      {q:"What is SFINAE?", opts:["Substitution Failure Is Not An Error","Static Function Inline","None","System Fault"], ans:"Substitution Failure Is Not An Error"},
+      {q:"What is constexpr?", opts:["Const variable","Compile-time evaluation","Runtime const","None"], ans:"Compile-time evaluation"},
+      {q:"What is an r-value reference?", opts:["Left value","Reference to temporary object","Named reference","None"], ans:"Reference to temporary object"},
+      {q:"What is the Rule of Five in C++11?", opts:["5 access modifiers","Define 5 special member functions if needed","5 constructors","None"], ans:"Define 5 special member functions if needed"},
+      {q:"What is variadic template?", opts:["Fixed params","Template with variable number of params","None","Static template"], ans:"Template with variable number of params"},
+      {q:"What is std::move?", opts:["Copies object","Casts to rvalue reference","Swaps","None"], ans:"Casts to rvalue reference"},
+      {q:"What is type erasure in C++?", opts:["Removing types","Hiding concrete type behind interface","Template param","None"], ans:"Hiding concrete type behind interface"},
+      {q:"What is undefined behavior vs implementation-defined?", opts:["Same","UB is unpredictable; impl-defined is platform-specific","Both errors","None"], ans:"UB is unpredictable; impl-defined is platform-specific"},
+    ]
+  },
+  React: {
+    Easy: [
+      {q:"What is React?", opts:["Backend framework","JavaScript UI library","Database","CSS framework"], ans:"JavaScript UI library"},
+      {q:"Who maintains React?", opts:["Google","Microsoft","Meta (Facebook)","Amazon"], ans:"Meta (Facebook)"},
+      {q:"What is JSX?", opts:["A new language","JavaScript XML syntax","A CSS preprocessor","None"], ans:"JavaScript XML syntax"},
+      {q:"What is a component in React?", opts:["A function","Reusable UI building block","A hook","A state"], ans:"Reusable UI building block"},
+      {q:"What hook manages state in functional components?", opts:["useEffect","useRef","useState","useContext"], ans:"useState"},
+      {q:"What does props stand for?", opts:["Properties","Protocols","Programs","None"], ans:"Properties"},
+      {q:"What is the virtual DOM?", opts:["Real DOM","In-memory copy of DOM","Browser DOM","None"], ans:"In-memory copy of DOM"},
+      {q:"What hook handles side effects?", opts:["useState","useContext","useEffect","useMemo"], ans:"useEffect"},
+      {q:"What does ReactDOM.render() do?", opts:["Creates component","Renders component to DOM","Deletes component","None"], ans:"Renders component to DOM"},
+      {q:"What is a key prop used for in lists?", opts:["Styling","Unique identifier for reconciliation","Animation","None"], ans:"Unique identifier for reconciliation"},
+    ],
+    Medium: [
+      {q:"What is lifting state up?", opts:["Using Redux","Moving state to common parent","Using context","None"], ans:"Moving state to common parent"},
+      {q:"What is React Context?", opts:["Local state","Global state without prop drilling","A hook","None"], ans:"Global state without prop drilling"},
+      {q:"What is useCallback used for?", opts:["Memoize value","Memoize function reference","Side effects","None"], ans:"Memoize function reference"},
+      {q:"What is useMemo?", opts:["Memoize function","Memoize computed value","State hook","None"], ans:"Memoize computed value"},
+      {q:"What is React.memo?", opts:["A hook","HOC to prevent unnecessary re-renders","Context","None"], ans:"HOC to prevent unnecessary re-renders"},
+      {q:"What is a controlled component?", opts:["DOM-managed input","React state-managed input","Uncontrolled","None"], ans:"React state-managed input"},
+      {q:"What is prop drilling?", opts:["Passing props through many levels","Using context","Redux","None"], ans:"Passing props through many levels"},
+      {q:"What is React Router used for?", opts:["State management","Client-side routing","Styling","API calls"], ans:"Client-side routing"},
+      {q:"What is useRef used for?", opts:["State","Mutable ref without re-render","Context","None"], ans:"Mutable ref without re-render"},
+      {q:"What is reconciliation in React?", opts:["State update","Diffing virtual DOM to update real DOM","Routing","None"], ans:"Diffing virtual DOM to update real DOM"},
+    ],
+    Hard: [
+      {q:"What is React Fiber?", opts:["A library","New reconciler with incremental rendering","A hook","None"], ans:"New reconciler with incremental rendering"},
+      {q:"What is code splitting?", opts:["Breaking CSS","Lazy loading parts of the app","Splitting state","None"], ans:"Lazy loading parts of the app"},
+      {q:"What is Suspense in React?", opts:["A hook","Pauses rendering until async resource is ready","Error boundary","None"], ans:"Pauses rendering until async resource is ready"},
+      {q:"What is concurrent mode?", opts:["Multi-threading","Interruptible rendering","Async state","None"], ans:"Interruptible rendering"},
+      {q:"What is hydration in React?", opts:["Adding water","Attaching React to server-rendered HTML","State init","None"], ans:"Attaching React to server-rendered HTML"},
+      {q:"What is the purpose of Error Boundary?", opts:["Catches JS errors in component tree","State management","Routing","None"], ans:"Catches JS errors in component tree"},
+      {q:"What is useReducer?", opts:["Like useState for complex state logic","A router","Context","None"], ans:"Like useState for complex state logic"},
+      {q:"What is the stale closure problem?", opts:["Memory leak","Using outdated state in closure","Prop drilling","None"], ans:"Using outdated state in closure"},
+      {q:"What is React Server Components?", opts:["SSR","Components that run only on server","Hooks","None"], ans:"Components that run only on server"},
+      {q:"What is the difference between useEffect and useLayoutEffect?", opts:["Same","useLayout fires before paint","useEffect is sync","None"], ans:"useLayout fires before paint"},
+    ]
+  },
+  JavaScript: {
+    Easy: [
+      {q:"What is JavaScript?", opts:["Markup language","Scripting language for web","CSS variant","Java module"], ans:"Scripting language for web"},
+      {q:"Which company developed JavaScript?", opts:["Microsoft","Apple","Netscape","Google"], ans:"Netscape"},
+      {q:"What does typeof return for a number?", opts:["'integer'","'number'","'num'","'float'"], ans:"'number'"},
+      {q:"Which keyword declares a block-scoped variable?", opts:["var","let","const","all"], ans:"let"},
+      {q:"What does === check?", opts:["Value only","Type only","Value and type","Reference"], ans:"Value and type"},
+      {q:"What is NaN?", opts:["A number","Not a Number","Null","None"], ans:"Not a Number"},
+      {q:"Which method adds to end of array?", opts:["push()","pop()","shift()","unshift()"], ans:"push()"},
+      {q:"What is a callback function?", opts:["A named function","Function passed as argument","Arrow function","None"], ans:"Function passed as argument"},
+      {q:"What does console.log() do?", opts:["Creates variable","Prints to console","Returns value","None"], ans:"Prints to console"},
+      {q:"What is the DOM?", opts:["Data Object Model","Document Object Model","Dynamic Object Map","None"], ans:"Document Object Model"},
+    ],
+    Medium: [
+      {q:"What is a Promise?", opts:["Sync operation","Object for async operations","A callback","None"], ans:"Object for async operations"},
+      {q:"What is hoisting in JavaScript?", opts:["Moving code to bottom","Moving declarations to top","Importing","None"], ans:"Moving declarations to top"},
+      {q:"What is the event loop?", opts:["A for loop","Handles async operations via queue","A timer","None"], ans:"Handles async operations via queue"},
+      {q:"What is closure?", opts:["A class","Function retaining outer scope access","A loop","None"], ans:"Function retaining outer scope access"},
+      {q:"What is prototype in JS?", opts:["A class","Object from which others inherit","A method","None"], ans:"Object from which others inherit"},
+      {q:"What does async/await do?", opts:["Makes sync code","Syntactic sugar for Promises","Creates threads","None"], ans:"Syntactic sugar for Promises"},
+      {q:"What is destructuring?", opts:["Deleting vars","Unpacking values from arrays/objects","Looping","None"], ans:"Unpacking values from arrays/objects"},
+      {q:"What is the spread operator?", opts:["Math multiply","Expands iterable","Imports","None"], ans:"Expands iterable"},
+      {q:"What is Map in JavaScript?", opts:["Array method","Key-value pairs preserving order","Object","None"], ans:"Key-value pairs preserving order"},
+      {q:"What is a WeakMap?", opts:["Weak reference Map","A small Map","Immutable Map","None"], ans:"Weak reference Map"},
+    ],
+    Hard: [
+      {q:"What is the temporal dead zone?", opts:["A time zone","Period where let/const are not accessible","A loop","None"], ans:"Period where let/const are not accessible"},
+      {q:"What is tail call optimization?", opts:["Loop optimization","Reuse stack frame for tail calls","Recursion limit","None"], ans:"Reuse stack frame for tail calls"},
+      {q:"What is a Proxy object?", opts:["Network proxy","Intercepts object operations","A class","None"], ans:"Intercepts object operations"},
+      {q:"What is the difference between microtasks and macrotasks?", opts:["Same","Microtasks run before macrotasks in event loop","Macrotasks first","None"], ans:"Microtasks run before macrotasks in event loop"},
+      {q:"What is Symbol in JavaScript?", opts:["A string","Unique and immutable primitive","A number","None"], ans:"Unique and immutable primitive"},
+      {q:"What is Object.freeze()?", opts:["Copies object","Prevents modification of object","Clones object","None"], ans:"Prevents modification of object"},
+      {q:"What is the purpose of Generator functions?", opts:["Async code","Return iterator with pausable execution","Create classes","None"], ans:"Return iterator with pausable execution"},
+      {q:"What is currying?", opts:["Cooking term","Transforming multi-arg function to chain of single-arg","Recursion","None"], ans:"Transforming multi-arg function to chain of single-arg"},
+      {q:"What is event delegation?", opts:["Passing events","Single listener on parent to handle child events","None","Bubbling"], ans:"Single listener on parent to handle child events"},
+      {q:"What is the module pattern?", opts:["Import/export","Encapsulation using IIFE","Class pattern","None"], ans:"Encapsulation using IIFE"},
+    ]
+  }
+};
+
+// ─── STATE ───
+let currentQuiz = { category:'', level:'', questions:[], index:0, score:0, selected:false };
+let timerId = null;
+let timeLeft = 20 * 60;
+
+function startQuiz(cat, level) {
+  currentQuiz = { category: cat, level: level, questions: shuffle([...QB[cat][level]]), index: 0, score: 0, selected: false };
+  timeLeft = 20 * 60;
+  document.getElementById('quizModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  clearInterval(timerId);
+  timerId = setInterval(tick, 1000);
+  renderQuestion();
+}
+
+function closeQuiz() {
+  clearInterval(timerId);
+  document.getElementById('quizModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function tick() {
+  timeLeft--;
+  const m = Math.floor(timeLeft / 60);
+  const s = timeLeft % 60;
+  const el = document.getElementById('timerEl');
+  if (el) {
+    el.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+    if (timeLeft <= 60) el.parentElement.classList.add('warning');
+  }
+  if (timeLeft <= 0) { clearInterval(timerId); finishQuiz(); }
+}
+
+function renderQuestion() {
+  const { category, level, questions, index } = currentQuiz;
+  if (index >= questions.length) { finishQuiz(); return; }
+  const q = questions[index];
+  const opts = shuffle([...q.opts]);
+  const pct = Math.round((index / questions.length) * 100);
+  const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+
+  document.getElementById('quizInner').innerHTML = `
+    <div class="quiz-header">
+      <div class="quiz-cat-label">${category} <span style="color:var(--muted);font-size:14px">(${level})</span></div>
+      <div class="timer${timeLeft<=60?' warning':''}">⏱ <span id="timerEl">${m}:${s<10?'0':''}${s}</span></div>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div class="q-num">Question ${index + 1} of ${questions.length}</div>
+    <div class="q-text">${q.q}</div>
+    <div class="options" id="optArea">
+      ${opts.map(o => `<button class="opt-btn" onclick="selectAnswer(this,'${escHtml(o)}','${escHtml(q.ans)}')">${o}</button>`).join('')}
+    </div>
+    <button class="next-btn" id="nextBtn" style="display:none" onclick="nextQuestion()">Next Question →</button>
+  `;
+}
+
+function escHtml(str) { return str.replace(/'/g, "\\'"); }
+
+function selectAnswer(btn, chosen, correct) {
+  if (currentQuiz.selected) return;
+  currentQuiz.selected = true;
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => {
+    b.disabled = true;
+    if (b.textContent === correct) b.classList.add('correct');
+    if (b === btn && chosen !== correct) b.classList.add('wrong');
+  });
+  if (chosen === correct) currentQuiz.score++;
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  currentQuiz.index++;
+  currentQuiz.selected = false;
+  renderQuestion();
+}
+
+function finishQuiz() {
+  clearInterval(timerId);
+  const { score, questions, category } = currentQuiz;
+  const total = questions.length;
+  const pct = Math.round((score / total) * 100);
+  const starCount = Math.max(1, Math.ceil((score / total) * 5));
+  const stars = '⭐'.repeat(starCount);
+  const msgs = ['Keep practicing!', 'Good effort!', 'Well done!', 'Great work!', 'Outstanding!'];
+  const msg = msgs[starCount - 1];
+
+  document.getElementById('quizInner').innerHTML = `
+    <div class="result-screen">
+      <h2 style="font-family:var(--font-head);font-size:28px;margin-bottom:8px">Quiz Completed!</h2>
+      <div class="stars">${stars}</div>
+      <div class="result-score">${score} / ${total}</div>
+      <p class="result-msg">${msg} — ${pct}% on your ${category} quiz.</p>
+      <div class="result-btns">
+        <button class="btn-hero" onclick="closeQuiz()">Back to Home</button>
+        <button class="btn-outline" onclick="startQuiz('${category}','${currentQuiz.level}')">Try Again</button>
+      </div>
+    </div>
+  `;
+
+  // Add to leaderboard
+  const name = "You";
+  const tbody = document.getElementById('lbBody');
+  const row = document.createElement('tr');
+  row.innerHTML = `<td>—</td><td style="color:var(--accent2)">${name}</td><td>${category} – ${currentQuiz.level}</td><td>${pct}% <span class="score-bar-wrap"><span class="score-bar" style="width:${pct}%"></span></span></td>`;
+  tbody.prepend(row);
+}
+</script>
+</body>
+</html>
